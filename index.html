@@ -82,7 +82,7 @@
         .then(response => response.json())
         .then(data => {
           if (data.found) {
-            result.innerHTML = `<span style="color: #0f0">✅ ${data.name} is registered</span>`;
+            result.innerHTML = `<span style="color: #0f0"> ${data.name} is registered</span> ✅`;
           } else {
             result.innerHTML = `<span style="color: #f00">❌ Not registered</span>`;
           }
