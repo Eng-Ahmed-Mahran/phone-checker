@@ -1,15 +1,24 @@
-this is Google App Script
+This is Google app script
 
 function doGet(e) {
   const phone = e.parameter.phone;
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
-  const data = sheet.getRange("B2:C").getValues(); // Get names and phone numbers
+  const data = sheet.getRange("B2:C").getValues(); // names in B, phones in C
+
+  const normalize = num => {
+    if (!num) return "";
+    return num.toString().replace(/\D/g, '') // remove non-digits
+               .replace(/^20/, '')           // remove country code if present
+               .replace(/^0/, '');           // remove leading 0
+  };
+
+  const inputPhone = normalize(phone);
 
   for (let row of data) {
-    const name = row[0]; // Column B
-    const phoneInSheet = row[1]; // Column C
+    const name = row[0];
+    const sheetPhone = normalize(row[1]);
 
-    if (phoneInSheet == phone) {
+    if (inputPhone === sheetPhone) {
       return ContentService.createTextOutput(JSON.stringify({
         found: true,
         name: name
