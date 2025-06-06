@@ -1,31 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Phone Number Check</title>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
+      font-family: Arial, sans-serif;
       background-color: #121212;
       color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      position: relative;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
 
     .container {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      width: 100%;
       max-width: 400px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     h2 {
       font-size: 1.8rem;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     input[type="text"] {
@@ -48,7 +64,6 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-sizing: border-box;
     }
 
     button:hover {
@@ -58,8 +73,6 @@
     #result {
       margin-top: 20px;
       font-size: 1rem;
-      text-align: center;
-      word-wrap: break-word;
     }
 
     .loader {
@@ -77,6 +90,12 @@
       }
     }
 
+    .footer {
+      font-size: 12px;
+      color: #888;
+      margin-top: 20px;
+    }
+
     @media (max-width: 480px) {
       h2 {
         font-size: 1.4rem;
@@ -92,23 +111,51 @@
 </head>
 <body>
 
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- App Container -->
   <div class="container">
     <h2>Check Phone Number</h2>
+    <p style="font-size: 14px; color: #aaa;">Check if someone is registered</p>
     <input type="text" id="phone" placeholder="Enter phone number" />
     <button id="checkBtn" onclick="checkPhoneNumber()">Check</button>
     <div id="result"></div>
+    <div class="footer">Made by Ahmed</div>
   </div>
 
+  <!-- Particles.js Script -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 }},
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 }},
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 6, "direction": "none", "out_mode": "out" }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": { "resize": true },
+        "modes": { "repulse": { "distance": 200, "duration": 0.4 }}
+      },
+      "retina_detect": true
+    });
+  </script>
+
+  <!-- Check Logic -->
   <script>
     function checkPhoneNumber() {
       const raw = document.getElementById('phone').value;
       const phoneNumber = raw.replace(/\D/g, '').replace(/^20/, '').replace(/^0/, '').trim();
       const result = document.getElementById('result');
-
       result.innerHTML = '<div class="loader"></div>';
 
       fetch(`https://script.google.com/macros/s/AKfycbxYDZx8kAjpu9xuTCxOfWyiSuhvSvZbRgQkEPfGavIgOjtXeezpsbkP0IEOclLAkMVA/exec?phone=${phoneNumber}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
           if (data.found) {
             result.innerHTML = `<span style="color: #0f0">✅ ${data.name} is registered</span>`;
@@ -116,20 +163,19 @@
             result.innerHTML = `<span style="color: #f00">❌ Not registered</span>`;
           }
         })
-        .catch(error => {
+        .catch(err => {
           result.innerHTML = '<span style="color: orange">⚠️ Error checking registration.</span>';
-          console.error(error);
+          console.error(err);
         });
     }
 
-    // Trigger check on Enter key
-    document.getElementById("phone").addEventListener("keypress", function(e) {
+    // Press Enter = Trigger Check
+    document.getElementById("phone").addEventListener("keypress", function (e) {
       if (e.key === "Enter") {
         e.preventDefault();
         document.getElementById("checkBtn").click();
       }
     });
   </script>
-
 </body>
 </html>
