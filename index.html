@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phone Checker</title>
+  <meta charset="UTF-8">
+  <title>Phone Number Check</title>
   <style>
     body {
       background-color: #121212;
-      color: #ffffff;
+      color: #fff;
       font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
@@ -17,69 +16,91 @@
       margin: 0;
     }
 
-    input, button {
+    input[type="text"] {
       padding: 10px;
-      margin: 10px;
-      border-radius: 5px;
-      border: none;
+      width: 250px;
       font-size: 16px;
-    }
-
-    input {
-      background-color: #1e1e1e;
-      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      outline: none;
     }
 
     button {
-      background-color: #3f51b5;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #1e88e5;
       color: white;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1565c0;
     }
 
     #result {
       margin-top: 20px;
-      font-size: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .loader {
+      width: 60px;
+      aspect-ratio: 4;
+      background: radial-gradient(circle closest-side, #fff 90%, #0000) 0/calc(100%/3) 100% space;
+      clip-path: inset(0 100% 0 0);
+      animation: l1 1s steps(4) infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes l1 {
+      to {
+        clip-path: inset(0 -34% 0 0);
+      }
     }
   </style>
 </head>
 <body>
-  <h2>Check Registration</h2>
+
+  <h2>Check Phone Number</h2>
   <input type="text" id="phone" placeholder="Enter phone number" />
   <button id="checkBtn" onclick="checkPhoneNumber()">Check</button>
+
   <div id="result"></div>
 
   <script>
     function checkPhoneNumber() {
-      const phoneNumber = document.getElementById('phone').value.replace(/\D/g, '').replace(/^20/, '').replace(/^0/, '').trim();
+      const raw = document.getElementById('phone').value;
+      const phoneNumber = raw.replace(/\D/g, '').replace(/^20/, '').replace(/^0/, '').trim();
+      const result = document.getElementById('result');
 
-      if (phoneNumber === "") {
-        document.getElementById('result').innerText = "Please enter a phone number.";
-        return;
-      }
+      result.innerHTML = '<div class="loader"></div>';
 
-      fetch('https://script.google.com/macros/s/AKfycbxYDZx8kAjpu9xuTCxOfWyiSuhvSvZbRgQkEPfGavIgOjtXeezpsbkP0IEOclLAkMVA/exec?phone=' + encodeURIComponent(phoneNumber))
+      fetch(`https://script.google.com/macros/s/AKfycbxYDZx8kAjpu9xuTCxOfWyiSuhvSvZbRgQkEPfGavIgOjtXeezpsbkP0IEOclLAkMVA/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => {
-          const resultDiv = document.getElementById('result');
           if (data.found) {
-            resultDiv.innerText = `✔ Registered as: ${data.name}`;
-            resultDiv.style.color = 'lightgreen';
+            result.innerHTML = `<span style="color: #0f0">✅ ${data.name} is registered</span>`;
           } else {
-            resultDiv.innerText = '✖ Not registered. Please fill out the form.';
-            resultDiv.style.color = 'red';
+            result.innerHTML = `<span style="color: #f00">❌ Not registered</span>`;
           }
         })
         .catch(error => {
-          document.getElementById('result').innerText = 'Error checking registration.';
+          result.innerHTML = '<span style="color: orange">⚠️ Error checking registration.</span>';
           console.error(error);
         });
     }
+
+    // Trigger check when Enter key is pressed
     document.getElementById("phone").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      document.getElementById("checkBtn").click();
-    }
-  });
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("checkBtn").click();
+      }
+    });
   </script>
+
 </body>
 </html>
