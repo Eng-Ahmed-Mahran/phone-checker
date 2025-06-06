@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phone Number Checker</title>
+</head>
+<body>
+  <h2>Check Your Registration</h2>
+  <input type="text" id="phoneInput" placeholder="Enter phone number" />
+  <button onclick="checkPhone()">Check</button>
+  <p id="result"></p>
+
+  <script>
+    async function checkPhone() {
+      const phone = document.getElementById("phoneInput").value.trim();
+      const response = await fetch("https://script.google.com/macros/s/AKfycbxYDZx8kAjpu9xuTCxOfWyiSuhvSvZbRgQkEPfGavIgOjtXeezpsbkP0IEOclLAkMVA/exec?phone=" + encodeURIComponent(phone));
+      const result = await response.text();
+
+      document.getElementById("result").textContent = (result === "Yes")
+        ? "✅ You are registered."
+        : "❌ Not found. Please register.";
+    }
+  </script>
+</body>
+</html>
