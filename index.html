@@ -74,6 +74,12 @@
           console.error(error);
         });
     }
+    document.getElementById("phone").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      document.getElementById("checkBtn").click();
+    }
+  });
   </script>
 </body>
 </html>
