@@ -50,7 +50,7 @@
 
   <script>
     function checkPhoneNumber() {
-      const phoneNumber = document.getElementById('phone').value.replace(/\s+/g, '').trim();
+      const phoneNumber = document.getElementById('phone').value.replace(/\D/g, '').replace(/^20/, '').replace(/^0/, '').trim();
 
       if (phoneNumber === "") {
         document.getElementById('result').innerText = "Please enter a phone number.";
